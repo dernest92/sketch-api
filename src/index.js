@@ -12,14 +12,10 @@ app.use(express.static(publicDirPath));
 const server = http.createServer(app);
 const io = socketio(server);
 
-let count = 0;
-
 io.on("connection", socket => {
-  socket.emit("connection", count);
-  socket.on("updateCount", () => {
-    count++;
-    // socket.emit("countUpdated", count);
-    io.emit("countUpdated", count);
+  socket.emit("connection");
+  socket.on("msgFromClient", msg => {
+    io.emit("msgToClients", msg);
   });
 });
 

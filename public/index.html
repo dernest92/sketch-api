@@ -12,7 +12,10 @@
     <title>Document</title>
   </head>
   <body>
-    <button id="count-btn">Count: <span class="current-count"></span></button>
+    <form id="input-form">
+      <input type="text" id="input-text" placeholder="message..." />
+      <button type="submit">send</button>
+    </form>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/chat.js"></script>
   </body>

@@ -1,23 +1,15 @@
 const socket = io();
-let currentCount = undefined;
 
-socket.on("connection", count => {
-  console.log("new connection. Current count:", count);
-  currentCount = count;
-  countDisplay.textContent = currentCount;
+const form = document.querySelector("#input-form");
+const inputField = document.querySelector("#input-text");
+
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  const msg = inputField.value;
+  socket.emit("msgFromClient", msg);
+  form.reset();
 });
 
-socket.on("countUpdated", count => {
-  console.log("new count. Current count:", count);
-  currentCount = count;
-  countDisplay.textContent = currentCount;
+socket.on("msgToClients", msg => {
+  console.log(msg);
 });
-
-const countBtn = document.querySelector("#count-btn");
-const countDisplay = document.querySelector(".current-count");
-
-countBtn.addEventListener("click", updateCount);
-
-function updateCount() {
-  socket.emit("updateCount");
-}
