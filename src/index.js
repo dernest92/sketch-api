@@ -17,14 +17,15 @@ io.on("connection", socket => {
 
   socket.on("msgFromClient", (msg, cb) => {
     socket.broadcast.emit("msgToClients", msg);
-    cb("delivered");
+    cb();
   });
 
-  socket.on("coordinatesFromClient", ({ lat, lng }) => {
+  socket.on("coordinatesFromClient", ({ lat, lng }, cb) => {
     socket.broadcast.emit(
       "msgToClients",
       `https://www.google.com/maps?q=${lat},${lng}`
     );
+    cb();
   });
 
   socket.on("disconnect", () => {
