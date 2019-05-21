@@ -13,9 +13,17 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 io.on("connection", socket => {
-  socket.emit("connection");
+  socket.broadcast.emit("msgToClients", "A new user has joined");
   socket.on("msgFromClient", msg => {
     io.emit("msgToClients", msg);
+  });
+
+  socket.on("coordinatesFromClient", ({ lat, lng }) => {
+    socket.broadcast.emit("msgToClients", `Location: lat: ${lat}, lng: ${lng}`);
+  });
+
+  socket.on("disconnect", () => {
+    io.emit("msgToClients", "A user has left");
   });
 });
 
