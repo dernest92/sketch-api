@@ -6,7 +6,9 @@ const locationBtn = document.querySelector("#share-location");
 form.addEventListener("submit", e => {
   e.preventDefault();
   const msg = e.target.elements.message.value;
-  socket.emit("msgFromClient", msg);
+  socket.emit("msgFromClient", msg, status =>
+    console.log(`message: ${status}`)
+  );
   form.reset();
 });
 

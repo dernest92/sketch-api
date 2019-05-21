@@ -14,12 +14,17 @@ const io = socketio(server);
 
 io.on("connection", socket => {
   socket.broadcast.emit("msgToClients", "A new user has joined");
-  socket.on("msgFromClient", msg => {
-    io.emit("msgToClients", msg);
+
+  socket.on("msgFromClient", (msg, cb) => {
+    socket.broadcast.emit("msgToClients", msg);
+    cb("delivered");
   });
 
   socket.on("coordinatesFromClient", ({ lat, lng }) => {
-    socket.broadcast.emit("msgToClients", `Location: lat: ${lat}, lng: ${lng}`);
+    socket.broadcast.emit(
+      "msgToClients",
+      `https://www.google.com/maps?q=${lat},${lng}`
+    );
   });
 
   socket.on("disconnect", () => {
