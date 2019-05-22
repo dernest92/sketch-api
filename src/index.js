@@ -3,6 +3,8 @@ const http = require("http");
 const path = require("path");
 const socketio = require("socket.io");
 
+let strokes = [];
+
 const port = process.env.PORT || 3000;
 const publicDirPath = path.join(__dirname, "../public");
 
@@ -15,6 +17,7 @@ const io = socketio(server);
 io.on("connection", socket => {
   console.log("new connection");
   socket.broadcast.emit("msgToClients", "A new user has joined");
+  socket.emit("recieveStrokes", strokes);
 
   socket.on("msgFromClient", (msg, cb) => {
     socket.broadcast.emit("msgToClients", msg);
@@ -29,8 +32,18 @@ io.on("connection", socket => {
     cb();
   });
 
+  socket.on("sendClearStrokes", () => {
+    strokes = [];
+    socket.broadcast.emit("recieveClearStrokes");
+  });
+
   socket.on("sendStroke", stroke => {
+    strokes.push(stroke);
     socket.broadcast.emit("recieveStroke", stroke);
+  });
+
+  socket.on("sendRemoveStroke", () => {
+    socket.broadcast.emit("recieveRemoveStroke");
   });
 
   socket.on("disconnect", () => {
