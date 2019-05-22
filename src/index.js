@@ -43,6 +43,7 @@ io.on("connection", socket => {
   });
 
   socket.on("sendRemoveStroke", () => {
+    strokes.pop();
     socket.broadcast.emit("recieveRemoveStroke");
   });
 
