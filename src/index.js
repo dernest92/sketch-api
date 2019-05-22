@@ -13,6 +13,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 io.on("connection", socket => {
+  console.log("new connection");
   socket.broadcast.emit("msgToClients", "A new user has joined");
 
   socket.on("msgFromClient", (msg, cb) => {
@@ -26,6 +27,10 @@ io.on("connection", socket => {
       `https://www.google.com/maps?q=${lat},${lng}`
     );
     cb();
+  });
+
+  socket.on("sendStroke", stroke => {
+    socket.broadcast.emit("recieveStroke", stroke);
   });
 
   socket.on("disconnect", () => {
