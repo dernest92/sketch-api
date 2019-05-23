@@ -3,7 +3,7 @@ const http = require("http");
 const path = require("path");
 const socketio = require("socket.io");
 
-let strokes = [];
+const boardManager = require("./boards");
 
 const port = process.env.PORT || 3000;
 const publicDirPath = path.join(__dirname, "../public");
@@ -15,35 +15,35 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 io.on("connection", socket => {
-  console.log("new connection");
-  socket.broadcast.emit("msgToClients", "A new user has joined");
-  socket.emit("recieveStrokes", strokes);
+  socket.on("getBoardNames", cb => {
+    const boardNames = boardManager.getBoardNames();
+    cb(boardNames);
+  });
 
-  socket.on("msgFromClient", (msg, cb) => {
-    socket.broadcast.emit("msgToClients", msg);
+  socket.on("newBoard", (newBoard, cb) => {
+    boardManager.addBoard(newBoard);
     cb();
   });
 
-  socket.on("coordinatesFromClient", ({ lat, lng }, cb) => {
-    socket.broadcast.emit(
-      "msgToClients",
-      `https://www.google.com/maps?q=${lat},${lng}`
-    );
-    cb();
+  socket.on("joinBoard", (boardName, cb) => {
+    console.log("join board", boardName);
+    socket.join(boardName);
+    const board = boardManager.getBoardByName(boardName);
+    cb(undefined, board.strokes);
   });
 
-  socket.on("sendClearStrokes", () => {
-    strokes = [];
-    socket.broadcast.emit("recieveClearStrokes");
+  socket.on("sendClearStrokes", boardName => {
+    boardManager.getBoardByName(boardName).strokes = [];
+    socket.broadcast.to(boardName).emit("recieveClearStrokes");
   });
 
-  socket.on("sendStroke", stroke => {
-    strokes.push(stroke);
-    socket.broadcast.emit("recieveStroke", stroke);
+  socket.on("sendStroke", ({ stroke, boardName }) => {
+    boardManager.getBoardByName(boardName).strokes.push(stroke);
+    socket.broadcast.to(boardName).emit("recieveStroke", stroke);
   });
 
-  socket.on("sendRemoveStroke", () => {
-    strokes.pop();
+  socket.on("sendRemoveStroke", boardName => {
+    boardManager.getBoardByName(boardName).strokes.pop();
     socket.broadcast.emit("recieveRemoveStroke");
   });
 
