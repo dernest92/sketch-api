@@ -22,6 +22,7 @@ io.on("connection", socket => {
 
   socket.on("newBoard", (newBoard, cb) => {
     boardManager.addBoard(newBoard);
+    io.emit("newBoardCreated", newBoard);
     cb();
   });
 
