@@ -28,9 +28,13 @@ io.on("connection", socket => {
 
   socket.on("joinBoard", (boardName, cb) => {
     console.log("join board", boardName);
-    socket.join(boardName);
     const board = boardManager.getBoardByName(boardName);
-    cb(undefined, board.strokes);
+    if (board) {
+      socket.join(boardName);
+      cb(undefined, board.strokes);
+    } else {
+      cb("error loading board", undefined);
+    }
   });
 
   socket.on("sendClearStrokes", boardName => {
