@@ -30,7 +30,7 @@ io.on("connection", socket => {
   });
 
   socket.on("leaveBoard", boardName => {
-    userManager.leaveBoard({ id: socket.id, boardName });
+    userManager.leaveBoard(socket.id);
     socket.leave(boardName);
     io.emit("updatedUsers", userManager.users);
   });

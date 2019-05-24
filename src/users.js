@@ -8,10 +8,19 @@ module.exports = {
     this.users = filteredUsers;
   },
   joinBoard({ id, boardName }) {
-    this.users.find(user => user.id === id).board = boardName;
+    const user = this.findUser(id);
+    if (user) {
+      user.board = boardName;
+    }
   },
-  leaveBoard({ id, boardName }) {
-    this.users.find(user => user.id === id).board = undefined;
+  leaveBoard(id) {
+    const user = this.findUser(id);
+    if (user) {
+      user.board = undefined;
+    }
     console.log(this.users);
+  },
+  findUser(id) {
+    return this.users.find(user => user.id === id);
   }
 };
