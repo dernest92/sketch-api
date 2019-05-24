@@ -38,22 +38,36 @@ io.on("connection", socket => {
   });
 
   socket.on("sendClearStrokes", boardName => {
-    boardManager.getBoardByName(boardName).strokes = [];
-    socket.broadcast.to(boardName).emit("recieveClearStrokes");
+    const board = boardManager.getBoardByName(boardName);
+    if (board) {
+      board.strokes = [];
+      socket.broadcast.to(boardName).emit("recieveClearStrokes");
+      cb(undefined);
+    } else {
+      cb("error clearing board");
+    }
   });
 
-  socket.on("sendStroke", ({ stroke, boardName }) => {
-    boardManager.getBoardByName(boardName).strokes.push(stroke);
-    socket.broadcast.to(boardName).emit("recieveStroke", stroke);
+  socket.on("sendStroke", ({ stroke, boardName }, cb) => {
+    const board = boardManager.getBoardByName(boardName);
+    if (board) {
+      board.strokes.push(stroke);
+      socket.broadcast.to(boardName).emit("recieveStroke", stroke);
+      cb(undefined);
+    } else {
+      cb("Error writing to board");
+    }
   });
 
   socket.on("sendRemoveStroke", boardName => {
-    boardManager.getBoardByName(boardName).strokes.pop();
-    socket.broadcast.emit("recieveRemoveStroke");
-  });
-
-  socket.on("disconnect", () => {
-    io.emit("msgToClients", "A user has left");
+    const board = boardManager.getBoardByName(boardName);
+    if (board) {
+      boardManager.getBoardByName(boardName).strokes.pop();
+      socket.broadcast.emit("recieveRemoveStroke");
+      cb(undefined);
+    } else {
+      cb("Error editing board");
+    }
   });
 });
 
