@@ -37,7 +37,7 @@ io.on("connection", socket => {
     }
   });
 
-  socket.on("sendClearStrokes", boardName => {
+  socket.on("sendClearStrokes", (boardName, cb) => {
     const board = boardManager.getBoardByName(boardName);
     if (board) {
       board.strokes = [];
@@ -59,7 +59,7 @@ io.on("connection", socket => {
     }
   });
 
-  socket.on("sendRemoveStroke", boardName => {
+  socket.on("sendRemoveStroke", (boardName, cb) => {
     const board = boardManager.getBoardByName(boardName);
     if (board) {
       boardManager.getBoardByName(boardName).strokes.pop();
