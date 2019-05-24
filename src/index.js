@@ -16,6 +16,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 io.on("connection", socket => {
+  io.emit("updatedUsers", userManager.users);
   socket.on("createUser", userName => {
     console.log("create", userName);
     userManager.createUser({ id: socket.id, name: userName });
