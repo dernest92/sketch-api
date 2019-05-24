@@ -26,11 +26,13 @@ io.on("connection", socket => {
     cb();
   });
 
-  socket.on("joinBoard", (boardName, cb) => {
+  socket.on("joinBoard", ({ boardName, user }, cb) => {
     console.log("join board", boardName);
     const board = boardManager.getBoardByName(boardName);
     if (board) {
       socket.join(boardName);
+      board.users.push(user);
+
       cb(undefined, board.strokes);
     } else {
       cb("error loading board", undefined);

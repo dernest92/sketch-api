@@ -3,7 +3,8 @@ module.exports = {
   addBoard(boardName) {
     const newBoard = {
       name: boardName,
-      strokes: []
+      strokes: [],
+      users: []
     };
     this.boards.push(newBoard);
   },
@@ -16,5 +17,9 @@ module.exports = {
   },
   clearBoardByName(boardName) {
     this.getBoardByName(boardName).strokes = [];
+  },
+  addUser({ user, boardName }) {
+    const board = this.getBoardNames(boardName);
+    board.users.push(user);
   }
 };
